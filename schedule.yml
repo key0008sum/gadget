@@ -1,0 +1,41 @@
+name: Daily Price Tracker
+
+# いつ実行するか（例：毎日 日本時間の朝8時）
+# ※UTC時間で指定するため、日本時間から-9時間した数値を書きます（23時 = 翌朝8時）
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  # 手動でも実行できるようにするボタンを追加
+  workflow_dispatch:
+
+# リポジトリ内のファイルを更新（価格履歴の保存）するための権限
+permissions:
+  contents: write
+
+jobs:
+  run-tracker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリのコードを取得
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 必要なライブラリのインストール
+        run: pip install -r requirements.txt
+
+      - name: 価格トラッカーの実行
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python mlt_price_tracker.py
+
+      - name: 価格履歴（price_history.json）を保存してコミット
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add price_history.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update price history" && git push)
