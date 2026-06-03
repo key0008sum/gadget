@@ -4,7 +4,8 @@ name: Daily Price Tracker
 # ※UTC時間で指定するため、日本時間から-9時間した数値を書きます（23時 = 翌朝8時）
 on:
   schedule:
-    - cron: '0 23 * * *'
+    # - cron: '0 23 * * *'
+    - cron: '0 * * * *'
   # 手動でも実行できるようにするボタンを追加
   workflow_dispatch:
 
