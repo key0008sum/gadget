@@ -1,15 +1,12 @@
 name: Daily Price Tracker
 
-# いつ実行するか（例：毎日 日本時間の朝8時）
-# ※UTC時間で指定するため、日本時間から-9時間した数値を書きます（23時 = 翌朝8時）
 on:
   schedule:
-    # - cron: '0 23 * * *'
+    # 1時間ごとに自動実行する設定
     - cron: '0 * * * *'
-  # 手動でも実行できるようにするボタンを追加
+  # ボタンを押して手動でも実行できるようにする
   workflow_dispatch:
 
-# リポジトリ内のファイルを更新（価格履歴の保存）するための権限
 permissions:
   contents: write
 
@@ -29,9 +26,12 @@ jobs:
       - name: 必要なライブラリのインストール
         run: pip install -r requirements.txt
 
+      # 🌟【ポイント】金庫(Secrets)の文字列を、discord_webhooks.jsonというファイルとして書き出す
+      - name: DiscordのURLファイルを生成
+        run: |
+          echo '${{ secrets.DISCORD_WEBHOOKS_JSON }}' > discord_webhooks.json
+
       - name: 価格トラッカーの実行
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python mlt_price_tracker.py
 
       - name: 価格履歴（price_history.json）を保存してコミット
