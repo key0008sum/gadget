@@ -36,4 +36,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add price_history.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update price history" && git pull --rebase && git push)
+          # 変更がある場合のみコミットする
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update price history"
+          # 保存する直前に、GitHub本体の最新状態をダウンロードして合体させる（ここが重要！）
+          git pull --rebase origin main
+          git push
