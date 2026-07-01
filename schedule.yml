@@ -3,7 +3,9 @@ name: Daily Price Tracker
 on:
   schedule:
     # 1時間ごとに自動実行する設定
-    - cron: '0 * * * *'
+    #- cron: '0 * * * *'
+    # 6時間ごとに自動実行する設定
+    - cron: '0 */6 * * *'
   # ボタンを押して手動でも実行できるようにする
   workflow_dispatch:
 
